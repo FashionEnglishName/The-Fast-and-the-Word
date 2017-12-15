@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0, width=device-width">
+	<meta name="screen-orientation" content="portrait">
+	<title>Document</title>
+</head>
+<script src="script/zepto.min.js"></script>
+<script src="script/jquery-1.12.3.min.js"></script>
+<link rel="stylesheet" type="text/css" href="css/index.css">
+<body>
+	<div id="container">
+		<div id="guidePanel"></div>
+		<div id="wordListPanel">
+			<div id="coming">即将出现的单词</div>
+			<div id="wordList">
+			</div>
+			<div id="start">朕知道了</div>
+		</div>
+		<div id="gamepanel">
+			<div class="score-wrap">
+	            <span id="chinese"></span>
+	        </div>
+	        <div class="score-wrap1">
+	            <span id="english"></span>
+	        </div>
+			<canvas id="stage" width="320" height="568"></canvas>	
+		</div>
+		<div id="gameoverPanel"></div>
+		<div id="successPanel">
+			<button class="btn1">再试一次</button>
+        	<button class="btn2">新的单词</button>
+		</div>
+		<div id="resultPanel">
+			<div id="scorecontent">
+	        	<span id="sChinese" class="lighttext">勾</span>的正确拼写是：<br />
+	        	<span id="sEnglish" class="lighttext">d1og</span><br />
+	        	<button class="btn1">再试一次</button>
+	        	<button class="btn2">新的单词</button>
+	        </div>
+		</div>
+	</div>
+</body>
+
+<script src="script/game.js">
+
+</script>
+</html>

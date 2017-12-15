@@ -1,0 +1,40 @@
+{
+    "wordlist": [
+        {
+            "English": "dog",
+            "Chinese": "狗"
+        },
+        {
+            "English": "cat",
+            "Chinese": "猫"
+        },
+        {
+            "English": "pig",
+            "Chinese": "猪"
+        },
+        {
+            "English": "apple",
+            "Chinese": "苹果"
+        },
+        {
+            "English": "newspaper",
+            "Chinese": "报纸"
+        },
+        {
+            "English": "news",
+            "Chinese": "新闻"
+        },
+        {
+            "English": "bird",
+            "Chinese": "鸟"
+        },
+        {
+            "English": "pen",
+            "Chinese": "钢笔"
+        },
+        {
+            "English": "question",
+            "Chinese": "问题"
+        }
+    ]
+}
