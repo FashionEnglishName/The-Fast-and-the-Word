@@ -125,6 +125,8 @@ function Car(ctx){
 	 					//判定是否过关
 		 				if(gameMonitor.wordId >= wordlist.length){
 		 					gameMonitor.stop();
+		 					$('#gamepanel').hide();
+
 		 					$('#successPanel').show();
 		 				}
 		 				else{
@@ -313,6 +315,7 @@ var gameMonitor = {
 		//第一次玩时初始化小车
 		body.on(gameMonitor.eventType.start, '#start', function(){
 			$('#wordListPanel').hide();
+			$('#gamepanel').show();
 			_this.initScene(ctx);
 			_this.run(ctx);
 		});
@@ -333,6 +336,7 @@ var gameMonitor = {
 	    $("#english").text("");
 	},
 	showWordList: function() {
+		$('#gamepanel').hide();
 		var appText = "<table>";
 		for(var t = 0; t<wordlist.length; t++){
 			appText += "<tr><td>"+ wordlist[t].word +"</td><td>" + wordlist[t].translation + "</td></tr>";
@@ -340,7 +344,7 @@ var gameMonitor = {
 		appText += "</table>";
 		$('#wordList').html("");
 		$('#wordList').append(appText);
-		$('#wordListPanel').css('display', 'inline');
+		$('#wordListPanel').css('display', 'block');
 	},
 	//绘制无缝背景
 	rollBg : function(ctx){
