@@ -114,7 +114,7 @@ function Car(ctx){
 	 					setTimeout(function(){
 	 						$('#gameoverPanel').hide();
 	 						$('#resultPanel').show();
-	 						$('#sChinese').text(wordlist[gameMonitor.wordId].Chinese);
+	 						$('#sChinese').text(wordlist[gameMonitor.wordId].translation);
 							$('#sEnglish').text(check);
 	 					}, 2000)
 	 				}
@@ -128,8 +128,8 @@ function Car(ctx){
 		 					$('#successPanel').show();
 		 				}
 		 				else{
-		 					check = wordlist[gameMonitor.wordId].English;
-		 					$("#chinese").text("").append(wordlist[gameMonitor.wordId].Chinese);
+		 					check = wordlist[gameMonitor.wordId].word;
+		 					$("#chinese").text("").append(wordlist[gameMonitor.wordId].translation.substring(0, 10) + "...");
 		 					$("#english").text("");
 		 				}
 	 				}
@@ -139,9 +139,6 @@ function Car(ctx){
 	 	}
 	 }
 }
-
-var wordlist = [];
-var check = "";
 
 function Letter(type,left,id){
 	this.speedUpTime = 300;
@@ -198,46 +195,6 @@ function ImageMonitor(){
 	}
 }
 
-var json = [
-        {
-            "English": "dog",
-            "Chinese": "狗"
-        },
-        {
-            "English": "cat",
-            "Chinese": "猫"
-        },
-        {
-            "English": "pig",
-            "Chinese": "猪"
-        },
-        {
-            "English": "apple",
-            "Chinese": "苹果"
-        },
-        {
-            "English": "newspaper",
-            "Chinese": "报纸"
-        },
-        {
-            "English": "news",
-            "Chinese": "新闻"
-        },
-        {
-            "English": "bird",
-            "Chinese": "鸟"
-        },
-        {
-            "English": "pen",
-            "Chinese": "钢笔"
-        },
-        {
-            "English": "question",
-            "Chinese": "问题"
-        }
-    ];
-
-
 
 var gameMonitor = {
 	w: 320,
@@ -258,8 +215,11 @@ var gameMonitor = {
 		move: 'touchmove',
 		end: 'touchend'
 	},
+	wordsArray: [],
+	
 
 	init: function(){
+		window.check = "123";
 		var _this = this;
 		var canvas = document.getElementById('stage');
 		var ctx = canvas.getContext('2d');
@@ -279,27 +239,35 @@ var gameMonitor = {
 		var _this = this;
 		var body = $(document.body);
 		//重新开始游戏时清除上次移动？
-		$(document).on(gameMonitor.eventType.move, function(event){
-			event.preventDefault();
-		});
+		// $(document).on(gameMonitor.eventType.move, function(event){
+		// 	event.preventDefault();
+		// });
 		//重新开始时初始化小车:失败
 		body.on(gameMonitor.eventType.start, '#scorecontent .btn1', function(){
 			$('#resultPanel').hide();
 			_this.letterList = [];
 			_this.wordId = 0;
-			//打乱
-		    wordlist.sort(function(){ return 0.5 - Math.random() });
-		    //显示第一个中文
-		    $("#chinese").text(wordlist[_this.wordId].Chinese);
-		    //放入第一个英文
-		    check = wordlist[_this.wordId].English;
-		    $("#english").text("");
-			var canvas = document.getElementById('stage');
-			var ctx = canvas.getContext('2d');
-			_this.car = new Car(ctx);
-			_this.car.control();
-			_this.reset();
-			_this.run(ctx);
+
+			_this.initCheck();
+			_this.showWordList();
+		});
+
+		//重新开始时初始化小车:失败 new words
+		body.on(gameMonitor.eventType.start, '#scorecontent .btn2', function(){
+			$('#resultPanel').hide();
+			_this.letterList = [];
+			_this.wordId = 0;
+			_this.initScene(ctx);
+
+			_this.getWords(function () {
+				$.each(_this.wordsArray, function(idx, obj) {
+				    wordlist[idx] = obj;
+				});
+
+				_this.initCheck();
+
+			    _this.showWordList();
+			});
 		});
 		
 		//重新开始时初始化小车:成功
@@ -307,59 +275,72 @@ var gameMonitor = {
 			$('#successPanel').hide();
 			_this.letterList = [];
 			_this.wordId = 0;
-			//打乱
-		    wordlist.sort(function(){ return 0.5 - Math.random() });
-		    //显示第一个中文
-		    $("#chinese").text(wordlist[_this.wordId].Chinese);
-		    //放入第一个英文
-		    check = wordlist[_this.wordId].English;
-		    $("#english").text("");
-			var canvas = document.getElementById('stage');
-			var ctx = canvas.getContext('2d');
-			_this.car = new Car(ctx);
-			_this.car.control();
-			_this.reset();
-			_this.run(ctx);
+
+			_this.initCheck();
+		    _this.showWordList();
+		});
+
+		//重新开始时初始化小车:成功 new word
+		body.on(gameMonitor.eventType.start, '#successPanel .btn2', function(){
+			$('#successPanel').hide();
+			_this.letterList = [];
+			_this.wordId = 0;
+			_this.initScene(ctx);
+
+			_this.getWords(function () {
+				$.each(_this.wordsArray, function(idx, obj) {
+				    wordlist[idx] = obj;
+				});
+
+				_this.initCheck();
+
+			    _this.showWordList();
+			});
 		});
 
 		body.on(gameMonitor.eventType.start, '#guidePanel', function(){
 			$(this).hide();
-			$.each(json, function(idx, obj) {
-			    wordlist[idx] = obj;
-			});
+			_this.getWords(function () {
+				$.each(_this.wordsArray, function(idx, obj) {
+				    wordlist[idx] = obj;
+				});
 
-			//打乱
-		    wordlist.sort(function(){ return 0.5 - Math.random() });
-		    //显示第一个中文
-		    $("#chinese").text(wordlist[_this.wordId].Chinese);
-		    //放入第一个英文
-		    check = wordlist[_this.wordId].English;
+				_this.initCheck();
 
-			var appText = "<table>";
-			for(var t = 0; t<wordlist.length; t++){
-				appText += "<tr><td>"+ wordlist[t].English +"</td><td>" + wordlist[t].Chinese + "</td></tr>";
-			}
-			appText += "</table>";
-			$('#wordList').append(appText);
-			$('#wordListPanel').css('display', 'inline');
-		    
-			// var b = JSON.stringify(data.responseJSON);
-			// var wordlist = eval('('+b+')');
-			// //var wordlist = eval('(' + data.responseJSON + ')');
-			// // var wordList = new Array();
-			// // for(var i = 0 in b.wordlist) {
-			// // 	wordList.push([data.responseJSON.wordlist[i].English, data.responseJSON.wordlist[i].Chinese]);
-			// // }
-			
+			    _this.showWordList();
+			});	
 		});
 		//第一次玩时初始化小车
 		body.on(gameMonitor.eventType.start, '#start', function(){
 			$('#wordListPanel').hide();
-			_this.car = new Car(ctx);
-			_this.car.paint();
-			_this.car.control();
-			gameMonitor.run(ctx);
+			_this.initScene(ctx);
+			_this.run(ctx);
 		});
+	},
+	initScene: function (ctx) {
+		console.log("ctx", ctx);
+		this.car = new Car(ctx);
+		this.car.control();
+		this.reset();
+	},
+	initCheck: function () {
+		//打乱
+	    wordlist.sort(function(){ return 0.5 - Math.random() });
+	    //显示第一个中文
+	    $("#chinese").text(wordlist[this.wordId].translation.substring(0, 10) + "...");
+	    //放入第一个英文
+	    check = wordlist[this.wordId].word;
+	    $("#english").text("");
+	},
+	showWordList: function() {
+		var appText = "<table>";
+		for(var t = 0; t<wordlist.length; t++){
+			appText += "<tr><td>"+ wordlist[t].word +"</td><td>" + wordlist[t].translation + "</td></tr>";
+		}
+		appText += "</table>";
+		$('#wordList').html("");
+		$('#wordList').append(appText);
+		$('#wordListPanel').css('display', 'inline');
 	},
 	//绘制无缝背景
 	rollBg : function(ctx){
@@ -481,6 +462,16 @@ var gameMonitor = {
 		bIsWM= sUserAgent.match(/windows mobile/i) == "windows mobile",
 		bIsWebview = sUserAgent.match(/webview/i) == "webview";
 		return (bIsIpad || bIsIphoneOs || bIsMidp || bIsUc7 || bIsUc || bIsAndroid || bIsCE || bIsWM);
+     },
+     getWords : function(callback) {
+     	var _this = this;
+     	$.get("http://codemoney.tech:8080/words", function(data) {
+     		_this.wordsArray = data;
+     		console.log(_this.wordsArray);
+     		callback();
+     	});
+
+     	
      }
 }
 if(!gameMonitor.isMobile()){
@@ -489,4 +480,6 @@ if(!gameMonitor.isMobile()){
 	gameMonitor.eventType.end = 'mouseup';
 }
 
+var wordlist = [];
+var check = "123";
 gameMonitor.init();
