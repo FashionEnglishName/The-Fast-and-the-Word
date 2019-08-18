@@ -106,14 +106,6 @@ table td:nth-child(even){
 	z-index: 1005
 }
 
-div.hearthot {
-	-webkit-animation: fire .2s linear;
-	-o-animation: fire .2s linear;
-	animation: fire .2s linear
-}
-
-
-
 #guidePanel {
 	background: rgba(0,0,0,0.6) url(../images/startbg.png) center 50% no-repeat;
 	background-size: 219px 369px;
